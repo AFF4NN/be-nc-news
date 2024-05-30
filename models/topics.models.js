@@ -5,4 +5,6 @@ exports.fetchAllTopics = () => {
     .then((result) => {
       return result.rows;
     });
+
+    
 };
