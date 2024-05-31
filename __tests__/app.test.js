@@ -131,3 +131,33 @@ test('should have articles in decending order ', () => {
       });
 });
 });
+
+describe('should give back comments most recently created  ', () => {
+
+  test(' test to see we are recieving an array of comments', () => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then((response) => { const {comments} = response.body;
+// console.log(response.body, "THIS IS response");
+    expect(Array.isArray(comments)).toBe(true)
+    
+
+    })
+  });
+
+  test('should return 400 with bad request if article id is not valid', () => {
+    return request(app)
+    .get("/api/articles/AFFAN/comments")
+    .expect(400)
+    .then((response) => {expect(response.body.msg).toEqual("Bad Request")});
+  
+});
+
+test('should return no comments when there are no comments against that article ID ', () => {
+  return request(app)
+  .get("/api/articles/2000/comments")
+    .expect(200)
+    .then((response) => {expect(response.body.msg).toEqual("No Comments")});
+});
+});
