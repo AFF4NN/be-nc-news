@@ -18,7 +18,7 @@ describe("/api/topics", () => {
     return request(app).get("/api/topics").expect(200);
   });
 
-  it("200: should return an array", () => {
+  it("should return an array", () => {
     return request(app)
       .get("/api/topics")
       .then((response) => {
@@ -50,7 +50,7 @@ describe("GET /api", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test("200: responds with an article object containing the correct properties", () => {
+  test("responds with an article object containing the correct properties", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
@@ -72,7 +72,7 @@ describe("GET /api/articles/:article_id", () => {
       });
   });
 
-  test("404: responds with an error when article_id does not exist", () => {
+  test("responds with an error when article_id does not exist", () => {
     return request(app)
       .get("/api/articles/999")
       .expect(404)
@@ -80,4 +80,54 @@ describe("GET /api/articles/:article_id", () => {
         expect(response.body.msg).toBe("Article not found");
       });
   });
+});
+
+describe("/api/articles", () => {
+  test("Test to check we are recieving an array of articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        expect(Array.isArray(articles)).toBe(true);
+        articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              article_img_url: expect.any(String),
+              comment_count: expect.any(String) 
+            })
+          );
+        });
+        
+      });
+  });
+
+test('should not have a property body', () => {
+  return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        articles.forEach((article) => {
+          expect(article).not.toHaveProperty("body")
+        });
+        
+      });
+});
+test('should have articles in decending order ', () => {
+  return request(app)
+  .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        const { articles } = response.body;
+        
+        expect(new Date(articles[0].created_at) > new Date(articles[1].created_at)).toBe(true)
+      });
+});
 });
